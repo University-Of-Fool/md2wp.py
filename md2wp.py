@@ -162,8 +162,3 @@ for i in range(len(md)):
 
     utils.writeText(o,md[i])
 
-
-
-    #for ii in range(len(line)):
-    #    if 
-    #   else
