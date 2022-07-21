@@ -17,7 +17,7 @@ for i in range(len(md)):
 
     if (md[i] == ""): continue
 
-    # ========特殊块========
+    # ========代码块（跨行解析）========
     
     if(inCodeBlock):
         if(md[i][0:3]=="```"): # 新行```结束代码块
@@ -34,16 +34,49 @@ for i in range(len(md)):
         o.write("\n")
         continue
 
+    # ========代码块（跨行解析）结束========
 
+    # ========行内样式========
+    if(md[i].find("`") !=-1 or md[i].find("*") !=-1 or md[i].find("~~")!=-1 or md[i].find("_") !=-1):
+        text=""
+
+        if ((md[i].count("***"))%2 == 0):
+            while md[i].count("***") != 0:
+                md[i] = md[i].replace("***","<strong><em>",1)
+                md[i] = md[i].replace("***","</em></strong>",1)
+
+        if ((md[i].count("**"))%2 == 0):
+            while md[i].count("**") != 0:
+                md[i] = md[i].replace("**","<strong>",1)
+                md[i] = md[i].replace("**","</strong>",1)
+
+        if ((md[i].count("*"))%2 == 0):
+            while md[i].count("*") != 0:
+                md[i] = md[i].replace("*","<em>",1)
+                md[i] = md[i].replace("*","</em>",1)
+            
+        if ((md[i].count("~~"))%2 == 0):
+            while md[i].count("~~") != 0:
+                md[i] = md[i].replace("~~","<s>",1)
+                md[i] = md[i].replace("~~","</s>",1)
+
+        if ((md[i].count("`"))%2 == 0):
+            while md[i].count("`") != 0:
+                md[i] = md[i].replace("`","<code>",1)
+                md[i] = md[i].replace("`","</code>",1)
+
+
+    # ========行内样式结束========
+
+
+    # ========无序列表（跨行解析）========
     if(inUList and (md[i].find("-",0,2)!=-1 and md[i].count("-",0,2)==1)):
         utils.writeUListItem(o,md[i].lstrip(" -"))
         continue
     if (inUList):
         utils.writeUListEnd(o)
         inUList=False
-        
-
-    # ========特殊块结束========
+    # ========无序列表（跨行解析）结束========
 
     # ========图片========
     if(md[i][0:2]=="!["):
@@ -126,67 +159,6 @@ for i in range(len(md)):
 
     # ========无序列表结束========
 
-    # ========行内样式========
-    if(md[i].find("*") !=-1 or md[i].find("~~")!=-1 or md[i].find("_") !=-1):
-        text=""
-
-        if ((md[i].count("***"))%2 == 0):
-            while md[i].count("***") != 0:
-                md[i] = md[i].replace("***","<strong><em>",1)
-                md[i] = md[i].replace("***","</em></strong>",1)
-
-        if ((md[i].count("**"))%2 == 0):
-            while md[i].count("**") != 0:
-                md[i] = md[i].replace("**","<strong>",1)
-                md[i] = md[i].replace("**","</strong>",1)
-
-        if ((md[i].count("*"))%2 == 0):
-            while md[i].count("*") != 0:
-                md[i] = md[i].replace("*","<em>",1)
-                md[i] = md[i].replace("*","</em>",1)
-            
-        if ((md[i].count("~~"))%2 == 0):
-            while md[i].count("~~") != 0:
-                md[i] = md[i].replace("~~","<s>",1)
-                md[i] = md[i].replace("~~","</s>",1)
-
-
-        utils.writeText(o,md[i])
-        continue
-
-
-
-
-
-        # temp = md[i]
-        # while temp.find("***")!= -1:
-        #     start = temp.find("***")
-        #     end = temp.find("***",start+1)
-        #     text = text + utils.getBoldEmText(temp[start+3:end])
-        #     temp = temp[(end+3):]
-
-
-        # temp = md[i]
-        # while temp[i].find("**")!= -1:
-        #     start = md[i].find("**")
-        #     end = md[i].find("**",start+1)
-        #     text = text + utils.getBoldText(md[i][start+2:end])
-        #     temp = temp[(end+2):]
-
-
-        # temp = md[i]
-        # while temp[i].find("*")!= -1:
-        #     start = md[i].find("*")
-        #     end = md[i].find("*",start+1)
-        #     text = text + utils.getEmText(md[i][start+1:end])
-        #     temp = temp[(end+1):]
-        # print(text)
-        # continue
-
-
-
-
-    # ========行内样式结束========
 
     utils.writeText(o,md[i])
 
